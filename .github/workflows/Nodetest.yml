@@ -6,6 +6,8 @@ name: all-stack CI
 on:
   push:
     branches: [ "master" ]
+env:
+  IMAGE_NAME: all-stack
 
 jobs:
   build:
@@ -40,4 +42,14 @@ jobs:
       working-directory: react
     - name: Check files after build
       run: ls -la react/build
+    - name: Login to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Build a container image from our angular and react app using Docker
+      run: docker build -t $IMAGE_NAME
+    - name: Tag & publish to GitHub Container Registry
+      run: |
+        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+        VERSION=latest
+        docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
 
