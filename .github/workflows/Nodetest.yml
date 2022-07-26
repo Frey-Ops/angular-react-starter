@@ -21,6 +21,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: Check files
       run: ls -la
+    - name: Install chrome
+      run: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - run: sudo dpkg -i google-chrome-stable_current_amd64.deb
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
