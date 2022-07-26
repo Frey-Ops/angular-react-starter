@@ -45,7 +45,7 @@ jobs:
     - name: Login to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: Build a container image from our angular and react app using Docker
-      run: docker build -t $IMAGE_NAME
+      run: docker build -t $IMAGE_NAME .
     - name: Tag & publish to GitHub Container Registry
       run: |
         IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
