@@ -27,7 +27,8 @@ jobs:
       run: ls -la
     - name: Get time
       run: |
-        curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/timing | grep duration_ms > 1.txt && cat 1.txt
+        time_exe=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/timing | grep run_duration_ms)
+        echo $time_exe
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
