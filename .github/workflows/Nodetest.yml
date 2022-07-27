@@ -52,7 +52,7 @@ jobs:
            VERSION=latest
            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
            docker push $IMAGE_ID:$VERSION
-    - name: Send mail notification!!
+    - name: Send mail notification!!!
       if: always()
       uses: dawidd6/action-send-mail@v3
       with:
