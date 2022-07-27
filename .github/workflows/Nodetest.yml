@@ -30,7 +30,7 @@ jobs:
       run: |
         gh api \
         -H "Accept: application/vnd.github+json" \
-         https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{github.id}}
+         repos/frayme/angular-react-starter/actions/runs/${{github.run_id}}/jobs
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
