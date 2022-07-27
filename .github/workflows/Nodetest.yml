@@ -8,6 +8,8 @@ on:
     branches: [ "test" ]
 env:
   IMAGE_NAME: all-stack
+  password_mail: ${{secrets.mail_pass}}
+  username_mail: ${{secrets.MAIL_USERNAME}}
 
 jobs:
   build:
@@ -31,14 +33,13 @@ jobs:
         server_address: smtp.gmail.com
         server_port: 465
     # user credentials
-      env:
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.mail_pass}}
+        username: $username_mail
+        password: $password_mail
     # email subject
-      subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-      body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
     # comma-separated string, send email to
-      to: prutkov.work@gmail.com
+        to: prutkov.work@gmail.com
     # from email name
-      from: John Doe
+        from: John Doe
