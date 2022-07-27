@@ -7,6 +7,7 @@ on:
   push:
     branches: [ "test" ]
 env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_NAME: all-stack
 
 
