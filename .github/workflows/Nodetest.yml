@@ -8,8 +8,7 @@ on:
     branches: [ "test" ]
 env:
   IMAGE_NAME: all-stack
-  password_mail: ${{secrets.mail_pass}}
-  username_mail: ${{secrets.MAIL_USERNAME}}
+
 
 jobs:
   build:
@@ -33,8 +32,8 @@ jobs:
         server_address: smtp.gmail.com
         server_port: 465
     # user credentials
-        username: $username_mail
-        password: $password_mail
+        password: '${{secrets.mail_pass}}'
+        username: '${{secrets.MAIL_USERNAME}}'
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
