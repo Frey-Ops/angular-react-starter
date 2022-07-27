@@ -69,4 +69,4 @@ jobs:
     # comma-separated string, send email to
         to: prutkov.work@gmail.com
     # from email name
-        from: ${{ github.repository_owner }}
+        from: Frey 
