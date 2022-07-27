@@ -51,7 +51,6 @@ jobs:
         IMAGE_ID=ghcr.io/angular-react-starter/$IMAGE_NAME
         VERSION=latest
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-    - name: Login to GitHub Container Registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - run: docker push $IMAGE_ID:$VERSION
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker push $IMAGE_ID:$VERSION
 
