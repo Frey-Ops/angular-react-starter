@@ -50,5 +50,6 @@ jobs:
       run: |
         IMAGE_ID=ghcr.io/angular-react-starter/$IMAGE_NAME
         VERSION=latest
+        docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
