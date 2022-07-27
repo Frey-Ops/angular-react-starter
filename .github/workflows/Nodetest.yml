@@ -52,21 +52,24 @@ jobs:
            VERSION=latest
            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
            docker push $IMAGE_ID:$VERSION
-    - name: Send mail notification!!!
-      if: always()
+    - name: Send mail
       uses: dawidd6/action-send-mail@v3
       with:
-    # mail server settings
+    # Required mail server address:
         server_address: smtp.gmail.com
+    # Required mail server port:
         server_port: 465
-    # user credentials
+    # Optional (recommended): mail server username:
         username: ${{secrets.MAIL_USERNAME}}
-        password:  ${{secrets.MAIL_PASSWORD}}
-    # email subject
-        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-    # email body as text
-        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-    # comma-separated string, send email to
+    # Optional (recommended) mail server password:
+        password: ${{secrets.MAIL_PASSWORD}}
+    # Required mail subject:
+        subject: Github Actions job result
+    # Required recipients' addresses:
         to: prutkov.work@gmail.com
-    # from email name
-        from: Frey 
+    # Required sender full name (address can be skipped):
+        from: Frey # <user@example.com>
+    # Optional whether this connection use TLS (default is true if server_port is 465)
+        secure: true
+    # Optional plain body:
+        body: Build job of ${{github.repository}} completed successfully!
