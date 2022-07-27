@@ -22,7 +22,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Check files
+    - name: Check files!
       run: ls -la
     - name: Send mail
       if: always()
