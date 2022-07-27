@@ -30,7 +30,7 @@ jobs:
         curl \
         -H "Accept: application/vnd.github+json" \ 
         -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-         https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{github.run_id}}/timing
+         https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/timing
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
