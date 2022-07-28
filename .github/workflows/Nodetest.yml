@@ -39,8 +39,10 @@ jobs:
       run: echo $GITHUB_CONTEXT
     - name: Get time
       run: |
-        time_exe=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/timing > 1.json)
-        echo $time_exe
+        gh api \
+        -H "Accept: application/vnd.github+json" \
+        /repos/OWNER/REPO/actions/runs/RUN_ID/timing > 1.json \
+        && cat 1.json
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
