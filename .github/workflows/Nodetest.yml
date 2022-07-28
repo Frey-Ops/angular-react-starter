@@ -22,13 +22,18 @@ jobs:
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
+    - run: exit 1
 
 
 
   notification:
    runs-on: ubuntu-latest
+   needs: build
+   if: ${{ always() }}
    steps:
     - uses: actions/checkout@v1
+    - run: | 
+        echo "result build: ${{ needs.build.result }}"
     - name: Check files!
       run: ls -la
     - name: Echo GitHub context
