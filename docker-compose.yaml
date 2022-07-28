@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  angular:
+    container_name: angular
+    build:
+      context: ./argular
+      dokerfile: Dockerfile
+
+
+  react:
+    container_name: react
+    build:
+      context: ./react
+      dokerfile: Dockerfile
+
+
