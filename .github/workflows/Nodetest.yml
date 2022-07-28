@@ -35,16 +35,14 @@ jobs:
       run: |
         npm install
         npm run build --if-present
-        npm run test
         npm run e2e
       working-directory: angular
     - name: Check files after build
       run: ls -la angular/dist/angular-starter
-    - name: Test react. npm install, build, and test
+    - name: Test react npm install, build, and test
       run: |
         npm install
         npm run build --if-present
-        npm run test
         npm run e2e
       working-directory: react
     - name: Check files after build
