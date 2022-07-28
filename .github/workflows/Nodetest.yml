@@ -58,7 +58,7 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{  }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        body: Build job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
