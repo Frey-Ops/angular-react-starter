@@ -22,8 +22,6 @@ jobs:
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
-    - name: Check files after build
-      run: ls -la react/build
 
 
 
@@ -41,7 +39,7 @@ jobs:
       run: |
         gh api \
         -H "Accept: application/vnd.github+json" \
-        /repos/OWNER/REPO/actions/runs/RUN_ID/timing > 1.json \
+        /repos/frayme/angular-react-starter/actions/runs/${{github.run_id}}/timing > 1.json \
         && cat 1.json
     - name: Send mail
       if: always()
