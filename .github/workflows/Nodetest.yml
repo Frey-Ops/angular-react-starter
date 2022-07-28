@@ -44,7 +44,7 @@ jobs:
       run: |
         gh api \
         -H "Accept: application/vnd.github+json" \
-        /repos/frayme/angular-react-starter/actions/runs/${{github.run_id}}/timing > 1.json \
+        /repos/frayme/angular-react-starter/actions/runs/${{github.run_id}} > 1.json \
         && cat 1.json
     - name: Send mail
       if: always()
@@ -58,7 +58,7 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        body: ${{  }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
