@@ -13,16 +13,8 @@ env:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: true
-      matrix:
-        node-version: [18.6]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
+   runs-on: ubuntu-latest
+   steps:
     - uses: actions/checkout@v1
     - name: Check files!
       run: ls -la
@@ -33,3 +25,37 @@ jobs:
     - name: Check files after build
       run: ls -la react/build
 
+
+
+  notification:
+   runs-on: ubuntu-latest
+   steps:
+    - uses: actions/checkout@v1
+    - name: Check files!
+      run: ls -la
+    - name: Echo GitHub context
+      env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo $GITHUB_CONTEXT
+    - name: Get time
+      run: |
+        time_exe=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/timing > 1.json)
+        echo $time_exe
+    - name: Send mail
+      if: always()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.MAIL_USERNAME}}
+    # App password for from google acc.
+        password: ${{secrets.MAIL_PASSWORD}}
+    # email subject
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+    # email body as text
+        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+    #  send email to
+        to: prutkov.work@gmail.com
+    # from email name
+        from: ${{ github.repository_owner }}
+   
