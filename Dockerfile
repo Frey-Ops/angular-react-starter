@@ -28,4 +28,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=react /react/build /usr/share/nginx/html/react
 COPY --from=angular /angular/dist/angular-starter /usr/share/nginx/html
 EXPOSE 80 3000
-CMD ["nginx", "-g", "daemon off;"]
+RUN mkdir /run/nginx \
+    && chown nginx: /run/nginx /var/cache/nginx
+USER nginx
