@@ -19,7 +19,7 @@ jobs:
    steps:
     - uses: actions/checkout@v1
     - id: run-id
-      run: echo "::set-output name=run-id-job::${{github.job}}"
+      run: echo "::set-output name=run-id-job::${{job.container.id}}"
     - name: Check files!
       run: ls -la
     - name: Echo GitHub context
