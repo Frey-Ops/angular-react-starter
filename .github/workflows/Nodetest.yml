@@ -46,10 +46,10 @@ jobs:
       run: echo $GITHUB_CONTEXT
     - name: Get time
       run: |
-        gh api \
-        -H "Accept: application/vnd.github+json" \
-        /repos/frayme/angular-react-starter/actions/runs/${{needs.build.outputs.run-id-job-1}} > 1.json \
-        && cat 1.json
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/actions/runs/${{needs.build.outputs.run-id-job-1}}/timing > 1.json \
+       && cat 1.json
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
