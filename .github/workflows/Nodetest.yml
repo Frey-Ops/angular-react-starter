@@ -21,7 +21,6 @@ jobs:
     - uses: actions/checkout@v1
     - id: run-id
       run: echo "::set-output name=run-id-job::${{github.run_id}}"
-    - run:  echo "::set-output name=get-job-id::${{github.run_id}}"
     - name: Check files!
       run: ls -la
     - name: Echo GitHub context
@@ -39,7 +38,7 @@ jobs:
        job_name: build
        per_page: 30
     - name: Output Current Job Log URL
-      run: echo ${{ steps.jobs.outputs.job_id }}
+      run: echo "::set-output name=get-job-id::${{ steps.jobs.outputs.job_id }}"
     - name: Get time
       run: curl https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{ steps.get-job-id.outputs.job_id }}
      # run: |
