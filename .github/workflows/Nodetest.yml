@@ -74,7 +74,8 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
+       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.get-job-id.outputs.get-job-id-1}} > 1.json \
+      # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
        && cat 1.json
 #    - name: Send mail
 #      if: always()
