@@ -45,10 +45,11 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
     - name: Get time
-     # run: |
-    #    TIME_EXE=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
+      run: |
+       TIME_EXE=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
+    - name: json
       env:
-          TIME_JS: ${{toJson(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs)}}
+          TIME_JS: ${{toJson($TIME_EXE)}}
       run: echo $TIME_JS
       #run: |
       # gh api \
