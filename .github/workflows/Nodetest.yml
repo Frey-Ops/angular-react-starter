@@ -39,11 +39,12 @@ jobs:
     - name: Output Current Job Log URL
       run: echo ${{ steps.jobs.outputs.job_id }}
     - name: Get time
-      run: |
-       gh api \
-       -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{ steps.jobs.outputs.job_id }} > 1.json \
-       && cat 1.json
+      run: curl https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{ steps.jobs.outputs.job_id }}
+     # run: |
+     #  gh api \
+     #  -H "Accept: application/vnd.github+json" \
+     #  /repos/frayme/angular-react-starter/actions/runs/check-runs/${{ steps.jobs.outputs.job_id }} > 1.json \
+     #  && cat 1.json
     - run: exit 1
 
 
