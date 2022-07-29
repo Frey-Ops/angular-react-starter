@@ -47,13 +47,13 @@ jobs:
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
-    - name: Get time
-      run: |
-       TIME_EXE=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
-    - name: json
-      env:
-          TIME_JS: ${{toJson($TIME_EXE)}}
-      run: echo $TIME_JS
+   # - name: Get time
+   #   run: |
+   #    TIME_EXE=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
+ #   - name: json
+ #     env:
+  #        TIME_JS: ${{toJson($TIME_EXE)}}
+ #     run: echo $TIME_JS
       #run: |
       # gh api \
       # -H "Accept: application/vnd.github+json" \
