@@ -37,7 +37,8 @@ jobs:
        job_name: build
        per_page: 30
     - name: Output Current Job Log URL
-      run: echo ${{ steps.jobs.outputs.html_url }}
+      run: echo ${{ steps.jobs.outputs.html }}
+    - run: echo ${{ steps.jobs.outputs.job_id }}
 
     - run: exit 1
 
