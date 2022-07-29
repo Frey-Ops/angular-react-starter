@@ -13,11 +13,11 @@ env:
 
 jobs:
   build:
-  outputs: ${{ steps.run_id.outputs.run_id}}
-  runs-on: ubuntu-latest
+   runs-on: ubuntu-latest
+   outputs: ${{ steps.run-id.outputs.run_id}}
    steps:
     - uses: actions/checkout@v1
-    - id: Get run_id
+    - id: run-id
       run: echo "::set-output name=step-one-output::${{github.run_id}}"
     - name: Check files!
       run: ls -la
