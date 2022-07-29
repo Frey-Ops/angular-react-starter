@@ -19,7 +19,7 @@ jobs:
    steps:
     - uses: actions/checkout@v1
     - id: run-id
-      run: echo "::set-output name=run-id-job::${{github.run_id}}"
+      run: echo "::set-output name=run-id-job::${{github.job}}"
     - name: Check files!
       run: ls -la
     - name: Echo GitHub context
@@ -48,7 +48,7 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/actions/runs/${{needs.build.outputs.run-id-job-1}}/timing > 1.json \
+       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.run-id-job-1}} > 1.json \
        && cat 1.json
     - name: Send mail
       if: always()
