@@ -28,25 +28,25 @@ jobs:
       run: | 
         echo $GITHUB_CONTEXT \
          && echo ${{github.api_url}} \
-        && echo ${{github.actions}}
+        && echo ${{github.action}}
     - run: exit 1
 
 
 
-  notification:
-   runs-on: ubuntu-latest
-   needs: build
-   if: ${{ always() }}
-   steps:
-    - uses: actions/checkout@v1
-    - run: | 
-        echo "result build: ${{ needs.build.result }}"
-    - name: Check files!
-      run: ls -la
-    - name: Echo GitHub context
-      env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo $GITHUB_CONTEXT
+ # notification:
+  # runs-on: ubuntu-latest
+ #  needs: build
+#   if: ${{ always() }}
+ #  steps:
+  #  - uses: actions/checkout@v1
+   # - run: | 
+    #    echo "result build: ${{ needs.build.result }}"
+    #- name: Check files!
+    #  run: ls -la
+    #- name: Echo GitHub context
+    #  env:
+    #      GITHUB_CONTEXT: ${{ toJson(github) }}
+    #  run: echo $GITHUB_CONTEXT
    # - name: Get time
    #   run: |
    #    TIME_EXE=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
@@ -59,21 +59,21 @@ jobs:
       # -H "Accept: application/vnd.github+json" \
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.run-id-job-1}} > 1.json \
       # && cat 1.json
-    - name: Send mail
-      if: always()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
+#    - name: Send mail
+ #     if: always()
+ #     uses: dawidd6/action-send-mail@v3
+ #     with:
+#        server_address: smtp.gmail.com
+  #      server_port: 465
+  #      username: ${{secrets.MAIL_USERNAME}}
     # App password for from google acc.
-        password: ${{secrets.MAIL_PASSWORD}}
+  #      password: ${{secrets.MAIL_PASSWORD}}
     # email subject
-        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+   #     subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: Build job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+  #      body: Build job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
     #  send email to
-        to: prutkov.work@gmail.com
+   #     to: prutkov.work@gmail.com
     # from email name
-        from: ${{ github.repository_owner }}
+    #    from: ${{ github.repository_owner }}
    
