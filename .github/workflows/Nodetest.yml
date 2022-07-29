@@ -19,12 +19,12 @@ jobs:
    steps:
     - uses: actions/checkout@v1
     - id: run-id
-      run: echo "::set-output name=run-id-job::${{job.container.id}}"
+      run: echo "::set-output name=run-id-job::${{github.run_id}}"
     - name: Check files!
       run: ls -la
     - name: Echo GitHub context
       env:
-          GITHUB_CONTEXT: ${{ toJson(job) }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
     - run: exit 1
 
@@ -45,11 +45,14 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
     - name: Get time
-      run: |
-       gh api \
-       -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.run-id-job-1}} > 1.json \
-       && cat 1.json
+      env:
+          TIME_JS: ${{toJson(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
+      run: echo $TIME_JS
+      #run: |
+      # gh api \
+      # -H "Accept: application/vnd.github+json" \
+      # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.run-id-job-1}} > 1.json \
+      # && cat 1.json
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
