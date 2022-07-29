@@ -30,14 +30,14 @@ jobs:
          && echo ${{github.api_url}} \
         && echo ${{github.action}}
     - name: Get Current ID Job 
-    - uses: Tiryoh/gha-jobid-action@v0
+      uses: Tiryoh/gha-jobid-action@v0
       id: jobs
       with:
        github_token: ${{ secrets.GITHUB_TOKEN }}
        job_name: build
        per_page: 30
     - name: Output Current Job Log URL
-    - run: echo ${{ steps.jobs.outputs.job_id }}
+      run: echo ${{ steps.jobs.outputs.job_id }}
     - name: Get time
       run: |
        gh api \
