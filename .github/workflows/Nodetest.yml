@@ -14,7 +14,8 @@ jobs:
   build:
    runs-on: ubuntu-latest
    outputs:
-    get-job-id-1: ${{steps.job-id.outputs.get-job-id}}
+    output-two: ${{ steps.step-two.outputs.step-two-output }}
+    #get-job-id-1: ${{steps.job-id.outputs.get-job-id}}
     run-id-job-1: ${{steps.run-id.outputs.run-id-job}}
    steps:
     - uses: actions/checkout@v1
@@ -31,14 +32,13 @@ jobs:
         && echo ${{github.action}}
     - name: Get Current ID Job 
       uses: Tiryoh/gha-jobid-action@v0
-      id: job-id
+      id: step-two
       with:
        github_token: ${{ secrets.GITHUB_TOKEN }}
        job_name: build
        per_page: 30
     - name: Output Current Job Log URL
-      run: echo "::set-output name=get-job-id::${{steps.job-id.outputs.job_id}}"
-    - run: echo ${{needs.build.outputs.get-job-id-1}}
+      run: echo "::set-output name=step-two-output::${{steps.step-two.outputs.job_id}}"
     - name: Get time
       run: curl https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{ steps.get-job-id.outputs.job_id }}
      # run: |
@@ -60,7 +60,7 @@ jobs:
         echo "result build: ${{ needs.build.result }}"
     - name: Check files!
       run: ls -la
-    - run: echo ${{needs.build.outputs.get-job-id-1}}
+    - run: echo ${{needs.build.outputs.output-two}}
     - name: Echo GitHub context
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
