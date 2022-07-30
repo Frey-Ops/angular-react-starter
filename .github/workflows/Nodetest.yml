@@ -60,7 +60,7 @@ jobs:
         echo "result build: ${{ needs.build.result }}"
     - name: Check files!
       run: ls -la
-    - run: echo ${{needs.build.outputs.output-two}}
+    - run: echo ${{needs.build.outputs.run-id-job-1}}
     - name: Echo GitHub context
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
