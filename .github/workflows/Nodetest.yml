@@ -75,10 +75,10 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} > result.js | sed 's/:/./g'
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} > result.js
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
     - name: Check files!
-      run: cat result.js | grep "started_at"
+      run: echo result.js | sed 's/:/./g'
        
 #    - name: Send mail
 #      if: always()
