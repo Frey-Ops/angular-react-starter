@@ -45,6 +45,7 @@ jobs:
      #  -H "Accept: application/vnd.github+json" \
      #  /repos/frayme/angular-react-starter/actions/runs/check-runs/${{ steps.jobs.outputs.job_id }} > 1.json \
      #  && cat 1.json
+    - run: echo ${{ github.event.repository.updated_at}} | sed 's/:/./g'
     - run: exit 1
 
 
