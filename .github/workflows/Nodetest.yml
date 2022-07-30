@@ -80,7 +80,7 @@ jobs:
     - name: Check files!
       run: |
        cat result.txt | sed 's/:/./g' > result1.txt
-       cat result1.txt
+       cat result1.txt | grep started_at
        
 #    - name: Send mail
 #      if: always()
