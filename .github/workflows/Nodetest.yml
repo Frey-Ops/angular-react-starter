@@ -79,7 +79,7 @@ jobs:
     - name: Check files!
       run: cat 1.json | grep started_at 
     - name: Check files JSON!
-      run: cat ${{ toJson(1.json) }}
+      run: cat ${{ fromJSON(1.json) }}
        
 #    - name: Send mail
 #      if: always()
