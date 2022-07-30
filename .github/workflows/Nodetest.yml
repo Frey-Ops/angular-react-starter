@@ -14,8 +14,8 @@ jobs:
   build:
    runs-on: ubuntu-latest
    outputs:
-    get-job-id-1: ${{ steps.job-id.outputs.get-job-id }}
-    run-id-job-1: ${{ steps.run-id.outputs.run-id-job}}
+    get-job-id-1: ${{steps.job-id.outputs.get-job-id}}
+    run-id-job-1: ${{steps.run-id.outputs.run-id-job}}
    steps:
     - uses: actions/checkout@v1
     - id: run-id
@@ -37,7 +37,7 @@ jobs:
        job_name: build
        per_page: 30
     - name: Output Current Job Log URL
-      run: echo "::set-output name=get-job-id::${{ steps.job-id.outputs.job_id }}"
+      run: echo "::set-output name=get-job-id::${{steps.job-id.outputs.job_id}}"
     - run: echo ${{needs.build.outputs.get-job-id-1}}
     - name: Get time
       run: curl https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{ steps.get-job-id.outputs.job_id }}
