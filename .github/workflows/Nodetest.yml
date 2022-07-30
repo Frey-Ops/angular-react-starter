@@ -77,7 +77,7 @@ jobs:
        /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} > result.js
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
     - name: Check files!
-      run: cat 1.js | grep "started_at"
+      run: cat result.js | grep "started_at"
        
 #    - name: Send mail
 #      if: always()
