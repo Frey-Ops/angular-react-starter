@@ -78,7 +78,9 @@ jobs:
        /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} > result.js
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
     - name: Check files!
-      run: echo result.js | sed 's/:/./g'
+      run: |
+       cat result.js | sed 's/:/./g' > result.js
+       cat result.js
        
 #    - name: Send mail
 #      if: always()
