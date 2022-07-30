@@ -75,12 +75,12 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} > result.js
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} > result.txt
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
     - name: Check files!
       run: |
-       cat result.js | sed 's/:/./g' > result.js
-       cat result.js
+       cat result.txt | sed 's/:/./g' > result1.txt
+       cat result1.txt
        
 #    - name: Send mail
 #      if: always()
