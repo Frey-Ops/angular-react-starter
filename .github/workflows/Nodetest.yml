@@ -9,6 +9,7 @@ on:
 env: 
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_NAME: all-stack
+  JOB_ID:  ${{ steps.get-job-id.outputs.job_id }}
 
 
 jobs:
@@ -60,7 +61,7 @@ jobs:
         echo "result build: ${{ needs.build.result }}"
     - name: Check files!
       run: ls -la
-    - run: echo ${{needs.build.outputs.get-job-id-1}}
+    - run: echo ${{env.JOB_ID}}
     - name: Echo GitHub context
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -75,7 +76,7 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
+       /repos/frayme/angular-react-starter/actions/runs/check-runs/${{env.JOB_ID}} > 1.json \
        && cat 1.json
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
        
