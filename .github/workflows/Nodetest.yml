@@ -2,7 +2,6 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: all-stack CI
-
 on:
   push:
     branches: [ "test" ]
@@ -17,10 +16,6 @@ jobs:
     get-job-id-1: ${{steps.job-id.outputs.get-job-id}}
     run-id-job-1: ${{steps.run-id.outputs.run-id-job}}
    steps:
-    - name: Setup timezone
-      uses: zcong1993/setup-timezone@master
-      with:
-        timezone: Asia/Yekaterinburg
     - uses: actions/checkout@v1
     - id: run-id
       run: echo "::set-output name=run-id-job::${{github.run_id}}"
@@ -50,6 +45,17 @@ jobs:
      #  /repos/frayme/angular-react-starter/actions/runs/check-runs/${{ steps.jobs.outputs.job_id }} > 1.json \
      #  && cat 1.json
     - run: echo ${{ github.event.repository.updated_at}} | sed 's/:/./g'
+    - name: Get Time
+      id: time-job-exe
+      uses: nanzm/get-time-action@v1.1
+      with:
+          timeZone: 5
+          format: 'YYYY-MM-DD-HH-mm-ss'
+    - name: Usage
+      env:
+          TIME: "${{ steps.time-job-exe.outputs.time }}"
+      run: |
+          echo $TIME
     - run: exit 1
 
 
