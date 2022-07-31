@@ -16,7 +16,7 @@ jobs:
     get-job-id-1: ${{steps.job-id.outputs.get-job-id}}
     run-id-job-1: ${{steps.run-id.outputs.run-id-job}}
    steps:
-    - run: timedatectl set-timezone Asia/Yekaterinburg
+    - run: sudo timedatectl set-timezone Asia/Yekaterinburg
     - uses: actions/checkout@v1
     - id: run-id
       run: echo "::set-output name=run-id-job::${{github.run_id}}"
@@ -66,7 +66,7 @@ jobs:
    needs: build
    if: ${{ always() }}
    steps:
-    - run: timedatectl set-timezone Asia/Yekaterinburg
+    - run: sudo timedatectl set-timezone Asia/Yekaterinburg
     - run: date
     - uses: actions/checkout@v1
     - run: | 
