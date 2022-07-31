@@ -38,10 +38,12 @@ jobs:
      - name: Test angular
        working-directory: angular
        run: |
+        npm install
         npm test -- --watch=false --browsers=ChromeHeadless
      - name: Test react
        working-directory: react
        run: |
+        npm install
         npm test -- --watch=false --browsers=ChromeHeadless
   
   build_push:
@@ -59,7 +61,7 @@ jobs:
       id: get-job-id
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        job_name: test
+        job_name: build_push
         per_page: 30
     - id: job-id
       run: echo "::set-output name=get-job-id::${{steps.get-job-id.outputs.job_id}}"
