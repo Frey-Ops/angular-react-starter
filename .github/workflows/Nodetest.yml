@@ -65,6 +65,7 @@ jobs:
    needs: build
    if: ${{ always() }}
    steps:
+    - run: date
     - uses: actions/checkout@v1
     - run: | 
         echo "result build: ${{ needs.build.result }}"
@@ -85,7 +86,7 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at' + 05:00 > start.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at' > start.txt
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
     - name: get Time end
       run: |
