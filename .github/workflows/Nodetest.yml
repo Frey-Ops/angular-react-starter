@@ -79,6 +79,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
     - name: get Time started
+    
     #  run: |
     #   TIME_EXE=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/jobs
    # - name: json
@@ -90,6 +91,10 @@ jobs:
        -H "Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at' | sed 's/Z/ + 05:00/g' > start.txt
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
+    - run: |
+        echo " started_time= $(cat start.txt)" >> $GITHUB_ENV
+    - run: |  
+        echo "${{ env.started_time }}"
     - name: get Time end
       run: |
        gh api \
@@ -98,9 +103,6 @@ jobs:
     - run: cat end.txt
     - name: Check files!
       run: cat start.txt #| sed 's/:/./g' > result1.txt
-    - run: | 
-        const d1 = new Date(2017, 2, 11, 11, 30);
-        d1.toString();
        
 #    - name: Send mail
 #      if: always()
@@ -114,7 +116,7 @@ jobs:
     # email subject
    #     subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-  #      body: Build job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+  #      body: Build job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}. Job start
     #  send email to
    #     to: prutkov.work@gmail.com
     # from email name
