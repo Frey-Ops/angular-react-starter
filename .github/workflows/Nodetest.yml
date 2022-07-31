@@ -17,6 +17,10 @@ jobs:
     get-job-id-1: ${{steps.job-id.outputs.get-job-id}}
     run-id-job-1: ${{steps.run-id.outputs.run-id-job}}
    steps:
+    - name: Setup timezone
+      uses: zcong1993/setup-timezone@master
+      with:
+        timezone: Asia/Yekaterinburg
     - uses: actions/checkout@v1
     - id: run-id
       run: echo "::set-output name=run-id-job::${{github.run_id}}"
