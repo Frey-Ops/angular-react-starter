@@ -91,15 +91,16 @@ jobs:
        /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at' | sed 's/Z/ + 05:00/g' > start.txt
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
     - name: get Time end
-      uses: |
+      run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.completed_at'  | sed 's/Z/ + 05:00/g' > end.txt
-      with:
-         timezone: 'Asia/Yekaterinburg' 
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.completed_at'  | sed 's/Z/ + 05:00/g' > end.txt 
     - run: cat end.txt
     - name: Check files!
       run: cat start.txt #| sed 's/:/./g' > result1.txt
+    - run: | 
+        const d1 = new Date(2017, 2, 11, 11, 30);
+        d1.toString();
        
 #    - name: Send mail
 #      if: always()
