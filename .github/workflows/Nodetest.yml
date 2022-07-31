@@ -36,9 +36,11 @@ jobs:
         node-version: '18.6'
         cache: 'npm'
      - name: Test angular
+       working-directory: angular
        run: |
         npm test -- --watch=false --browsers=ChromeHeadless
      - name: Test react
+       working-directory: react
        run: |
         npm test -- --watch=false --browsers=ChromeHeadless
   
