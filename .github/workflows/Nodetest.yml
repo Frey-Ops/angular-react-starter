@@ -10,36 +10,70 @@ env:
   IMAGE_NAME: all-stack
 
 jobs:
-  build:
+  test:
+     runs-on: ubuntu-latest
+     outputs:
+        get-github-job: ${{github.job}}
+        get-job-id-test: ${{steps.job-id.outputs.get-job-id}}
 
+     strategy:
+         fail-fast: true
+
+     steps:
+     - name: Get Current ID Job 
+       uses: Tiryoh/gha-jobid-action@v0
+       id: get-job-id
+       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        job_name: test
+        per_page: 30
+     - id: job-id
+       run: echo "::set-output name=get-job-id::${{steps.get-job-id.outputs.job_id}}"
+     - uses: actions/checkout@v1
+     - name: Use Node.js
+       uses: actions/setup-node@v1
+       with:
+        node-version: '18.6'
+        cache: 'npm'
+     - name: Test angular
+       run: |
+        npm test -- --watch=false --browsers=ChromeHeadless
+     - name: Test react
+       run: |
+        npm test -- --watch=false --browsers=ChromeHeadless
+  
+  build_push:
+    needs: [test]
     runs-on: ubuntu-latest
+    outputs:
+        get-github-job: ${{github.job}}
+        get-job-id-build: ${{steps.job-id.outputs.get-job-id}}
 
     strategy:
       fail-fast: true
-      matrix:
-        node-version: [18.6]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
+    - name: Get Current ID Job 
+      uses: Tiryoh/gha-jobid-action@v0
+      id: get-job-id
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        job_name: test
+        per_page: 30
+    - id: job-id
+      run: echo "::set-output name=get-job-id::${{steps.get-job-id.outputs.job_id}}"
     - uses: actions/checkout@v1
-    - name: Check files
-      run: ls -la
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '18.6'
         cache: 'npm'
-    - name: Test angular. npm install, build, and test
-      run: |
-        npm test -- --watch=false --browsers=ChromeHeadless
-        npm run build --if-present
+    - name: Build angular
+      run:  npm run build --if-present
       working-directory: angular
     - name: Check files after build
       run: ls -la angular/dist/angular-starter
-    - name: Test react. npm install, build, and test
-      run: |
-        npm test -- --watch=false --browsers=ChromeHeadless
-        npm run build --if-present
+    - name: Build react
+      run: npm run build --if-present
       working-directory: react
     - name: Check files after build
       run: ls -la react/build
@@ -53,10 +87,39 @@ jobs:
            VERSION=latest
            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
            docker push $IMAGE_ID:$VERSION
-    - name: Get time
+           
+  notification:
+    needs: [test, build_push]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: get Time started test job
       run: |
-        time_exe=$(curl https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/timing | grep duration_ms)
-        echo $time_exe
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.get-job-id-test}} --jq '.started_at' > start_test.txt
+       echo " started_time_test= $(cat start_test.txt)" >> $GITHUB_ENV
+    - name: get Time finish test job
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.get-job-id-test}} --jq '.completed_at' > finish_test.txt
+       echo " finished_time_test= $(cat finish_test.txt)" >> $GITHUB_ENV
+     #
+    - name: get Time started build job
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build_push.outputs.get-job-id-build}} --jq '.started_at' > start_build.txt
+       echo " started_time_build= $(cat start_build.txt)" >> $GITHUB_ENV
+    - name: get Time finish build job
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build_push.outputs.get-job-id-build}} --jq '.completed_at' > finish_build.txt
+       echo " finish_time_build= $(cat finish_build.txt)" >> $GITHUB_ENV
+     #
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
@@ -69,7 +132,8 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        body: ${{ needs.test.outputs.get-github-job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }} "\n"
+         ${{ needs.build_push.outputs.get-github-job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }} "\n"
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
