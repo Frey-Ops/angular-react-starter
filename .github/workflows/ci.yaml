@@ -143,43 +143,6 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ needs.testing.outputs.get-github-job-test }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
-         ${{ needs.build_push.outputs.get-github-job-build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
-    #  send email to
-        to: prutkov.work@gmail.com
-    # from email name
-        from: ${{ github.repository_owner }}
-    - name: Send mail
-      if: ${{ failure() }}
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
-    # App password for from google acc.
-        password: ${{secrets.MAIL_PASSWORD}}
-    # email subject
-        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-    # email body as text
-        body: ${{ needs.testing.outputs.get-github-job-test }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
-         ${{ needs.build_push.outputs.get-github-job-build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
-    #  send email to
-        to: prutkov.work@gmail.com
-    # from email name
-        from: ${{ github.repository_owner }}
-
- - name: Send mail
-      if: ${{ failure() }}
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
-    # App password for from google acc.
-        password: ${{secrets.MAIL_PASSWORD}}
-    # email subject
-        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-    # email body as text
         body: ${{ needs.testing.outputs.get-github-job-test }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}.
          ${{ needs.build_push.outputs.get-github-job-build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}.
     #  send email to
