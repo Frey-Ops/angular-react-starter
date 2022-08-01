@@ -57,6 +57,9 @@ jobs:
           TIME: "${{ steps.time-job-exe.outputs.time }}"
       run: |
           echo $TIME
+    - name: jmeter-runner-action
+      uses: arunpunaroor/jmeter-runner-action@v1
+
     - run: exit 1
 
 
