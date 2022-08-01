@@ -14,8 +14,8 @@ jobs:
   test:
      runs-on: ubuntu-latest
      outputs:
-        get-github-job: ${{github.job}}
-        get-job-id-test: ${{steps.job-id.outputs.get-job-id}}
+        get-github-job-test: ${{github.job}}
+        get-job-id-test: ${{steps.job-id-test.outputs.get-job-id-test}}
 
      strategy:
          fail-fast: true
@@ -30,7 +30,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         job_name: test
         per_page: 30
-     - id: job-id
+     - id: job-id-test
        run: echo "::set-output name=get-job-id-test::${{steps.get-job-id-test.outputs.job_id}}"
      - uses: actions/checkout@v1
      - run: ls -la
@@ -56,7 +56,7 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     outputs:
-        get-github-job: ${{github.job}}
+        get-github-job-build: ${{github.job}}
         get-job-id-build: ${{steps.job-id-build.outputs.get-job-id-build}}
 
     strategy:
@@ -147,8 +147,8 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ needs.test.outputs.get-github-job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }} "\n"
-         ${{ needs.build_push.outputs.get-github-job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }} "\n"
+        body: ${{ needs.test.outputs.get-github-job-test }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }} "\n"
+         ${{ needs.build_push.outputs.get-github-job-build }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }} "\n"
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
