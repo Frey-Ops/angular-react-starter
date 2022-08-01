@@ -39,11 +39,13 @@ jobs:
        working-directory: ./angular
        run: |
         npm install
+        ls -la
         npm test -- --watch=false --browsers=ChromeHeadless
      - name: Test react
        working-directory: ./react
        run: |
         npm install
+        ls -la
         npm test -- --watch=false --browsers=ChromeHeadless
   
   build_push:
