@@ -19,8 +19,8 @@ jobs:
 
      strategy:
          fail-fast: true
-         matrix:
-          node-version: [18.6]
+        # matrix:
+        #  node-version: [18.6]
 
      steps:
     
@@ -28,7 +28,7 @@ jobs:
      - name: Use Node.js
        uses: actions/setup-node@v1
        with:
-        node-version: ${{ matrix.node-version }}
+        node-version:  '18.6' #${{ matrix.node-version }}
      - name: Test angular
        run: |
         npm install
