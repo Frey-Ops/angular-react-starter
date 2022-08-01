@@ -110,27 +110,32 @@ jobs:
        gh api \
        -H "Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.testing.outputs.get-job-id-test}} --jq '.started_at' > start_test.txt
-       echo " started_time_test= $(cat start_test.txt)" >> $GITHUB_ENV
+       echo "started_time_test=$(cat start_test.txt)" >> $GITHUB_ENV
     - name: get Time finish test job
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.testing.outputs.get-job-id-test}} --jq '.completed_at' > finish_test.txt
-       echo " finished_time_test= $(cat finish_test.txt)" >> $GITHUB_ENV
+       echo "finished_time_test=$(cat finish_test.txt)" >> $GITHUB_ENV
      #
     - name: get Time started build job
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.build_push.outputs.get-job-id-build}} --jq '.started_at' > start_build.txt
-       echo " started_time_build= $(cat start_build.txt)" >> $GITHUB_ENV
+       echo "started_time_build=$(cat start_build.txt)" >> $GITHUB_ENV
     - name: get Time finish build job
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.build_push.outputs.get-job-id-build}} --jq '.completed_at' > finish_build.txt
-       echo " finish_time_build= $(cat finish_build.txt)" >> $GITHUB_ENV
+       echo "finished_time_build=$(cat finish_build.txt)" >> $GITHUB_ENV
      #
+    - run: |
+        echo ${{env.started_time_build}}
+        echo ${{env.finished_time_build}}
+        echo ${{env.started_time_test}}
+        echo ${{env.finished_time_test}}
     - name: Send mail
       if: always()
       uses: dawidd6/action-send-mail@v3
@@ -143,8 +148,8 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ needs.test.outputs.get-github-job-test }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }} "\n"
-         ${{ needs.build_push.outputs.get-github-job-build }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }} "\n"
+        body: ${{ needs.testing.outputs.get-github-job-test }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}
+         ${{ needs.build_push.outputs.get-github-job-build }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
