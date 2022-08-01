@@ -30,6 +30,7 @@ jobs:
      - id: job-id
        run: echo "::set-output name=get-job-id::${{steps.get-job-id.outputs.job_id}}"
      - uses: actions/checkout@v1
+     - run: ls -la
      - name: Use Node.js
        uses: actions/setup-node@v1
        with:
@@ -46,6 +47,7 @@ jobs:
        run: |
         npm install
         ls -la
+        ls -la src
         npm test -- --watch=false --browsers=ChromeHeadless
   
   build_push:
