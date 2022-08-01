@@ -28,7 +28,7 @@ jobs:
        id: get-job-id-test
        with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          job_name: testing
+          job_name: ${{github.job}}
           per_page: 30
      - run: echo ${{steps.get-job-id-test.outputs.job_id}}
      - id: job-id-test
