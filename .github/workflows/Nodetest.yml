@@ -47,10 +47,10 @@ jobs:
      - name: Test react
        run: |
         npm install
+        npm run build --if-present
         ls -la
-        pwd
         ls -la src
-        cd src
+        cp app.js App.js
         npm run test -- --watch=false --browsers=ChromeHeadless
        working-directory: react
   
