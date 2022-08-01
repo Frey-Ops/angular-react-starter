@@ -40,17 +40,18 @@ jobs:
         cache: 'npm'
      - name: Test angular
        run: |
-        npm install
-        npm run build --if-present
-        npm test -- --watch=false --browsers=ChromeHeadless
+        npm run test -- --watch=false --browsers=ChromeHeadless
+      #  npm test -- --watch=false --browsers=ChromeHeadless
        working-directory: angular
      - name: Test react
        run: |
         npm install
         npm run build --if-present
         ls -la
+        pwd
         ls -la src
-        npm test -- --watch=false --browsers=ChromeHeadless
+        cd src
+        npm run test -- --watch=false --browsers=ChromeHeadless
        working-directory: react
   
   build_push:
