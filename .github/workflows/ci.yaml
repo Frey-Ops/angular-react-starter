@@ -14,7 +14,6 @@ jobs:
   testing:
      runs-on: ubuntu-latest
      outputs:
-        get-github-job-test: ${{github.job}}
         get-job-id-test: ${{steps.job-id-test.outputs.get-job-id-test-out}}
 
      strategy:
@@ -48,7 +47,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           job_name: ${{github.job}}
           per_page: 30
-     - run: echo ${{steps.get-job-id-test.outputs.job_id}}
      - id: job-id-test
        run: echo "::set-output name=get-job-id-test-out::${{steps.get-job-id-test.outputs.job_id}}"
   
@@ -56,7 +54,6 @@ jobs:
     needs: [testing]
     runs-on: ubuntu-latest
     outputs:
-        get-github-job-build: ${{github.job}}
         get-job-id-build: ${{steps.job-id-build.outputs.get-job-id-build}}
 
     strategy:
@@ -143,8 +140,8 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ needs.testing.outputs.get-github-job-test }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}.
-         ${{ needs.build_push.outputs.get-github-job-build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}.
+        body: Testing job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}.
+         Build and Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}.
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
@@ -161,8 +158,8 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ needs.testing.outputs.get-github-job-test }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
-         ${{ needs.build_push.outputs.get-github-job-build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
+        body: Testing job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
+         Build and Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
