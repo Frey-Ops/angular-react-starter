@@ -1,17 +1,10 @@
 version: '3'
 
 services:
-  angular:
-    container_name: angular
-    build:
-      context: ./argular
-      dokerfile: Dockerfile
-
-
-  react:
-    container_name: react
-    build:
-      context: ./react
-      dokerfile: Dockerfile
-
-
+ nginx:
+    image: ghcr.io/frayme/all-stack:latest
+    container_name: lb-nginx
+    restart: always
+    ports:
+      - "8080:80"
+      - "3000:3000"
