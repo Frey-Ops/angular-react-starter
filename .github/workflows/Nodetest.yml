@@ -148,8 +148,8 @@ jobs:
     # email subject
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
     # email body as text
-        body: ${{ needs.testing.outputs.get-github-job-test }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}
-         ${{ needs.build_push.outputs.get-github-job-build }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}
+        body: ${{ needs.testing.outputs.get-github-job-test }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
+         ${{ needs.build_push.outputs.get-github-job-build }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
     #  send email to
         to: prutkov.work@gmail.com
     # from email name
