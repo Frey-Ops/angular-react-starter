@@ -40,10 +40,12 @@ jobs:
         cache: 'npm'
      - name: Test angular
        run: |
+        npm run build --if-present
         npm test -- --watch=false --browsers=ChromeHeadless
        working-directory: angular
      - name: Test react
        run: |
+        npm run build --if-present
         ls -la
         ls -la src
         npm test -- --watch=false --browsers=ChromeHeadless
