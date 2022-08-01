@@ -30,6 +30,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         job_name: test
         per_page: 30
+     - run: echo ${{steps.get-job-id-test.outputs.job_id}}
      - id: job-id-test
        run: echo "::set-output name=get-job-id-test::${{steps.get-job-id-test.outputs.job_id}}"
      - uses: actions/checkout@v1
@@ -69,6 +70,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         job_name: build_push
         per_page: 30
+    - run: echo ${{steps.get-job-id-test.outputs.job_id}}
     - id: job-id-build
       run: echo "::set-output name=get-job-id-build::${{steps.get-job-id-build.outputs.job_id}}"
     - uses: actions/checkout@v1
