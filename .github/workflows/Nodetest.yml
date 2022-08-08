@@ -76,6 +76,8 @@ jobs:
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
+    - run: |
+        curl -H "Time-Zone: Asia/Yekaterinburg" -X POST https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}}
     - name: get Time started
     
     #  run: |
