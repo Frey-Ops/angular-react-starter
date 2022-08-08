@@ -81,7 +81,8 @@ jobs:
           -H "Time-Zone: Asia/Yekaterinburg"
           -H "Accept: application/vnd.github+json" \ 
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-           https://api.github.com/repos/frayme/angular-react-starter/actions/jobs/${{needs.build.outputs.run-id-job-1}}
+           https://api.github.com/repos/frayme/angular-react-starter/actions/runs/${{needs.build.outputs.run-id-job-1}} > result.json
+        cat result.json
     - name: get Time started
     
     #  run: |
