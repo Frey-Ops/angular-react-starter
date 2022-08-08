@@ -95,7 +95,7 @@ jobs:
     #   /repos/frayme/angular-react-starter/actions/runs/${{github.run_id}}/usage  > result.txt
     #   cat result.txt
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
-    - run: |
+      run: |
        gh api \
        -H "Time-Zone: Asia/Yekaterinburg Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at'  > start.txt
