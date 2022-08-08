@@ -91,9 +91,9 @@ jobs:
     #   cat result.txt
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
       run: |
-       gh api \
+       curl \
        -H "Time-Zone: Asia/Yekaterinburg" -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at'  > start.txt
+       -X POST https://api.github.com/repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at'  > start.txt
        echo " started_time= $(cat start.txt)" >> $GITHUB_ENV
     - run: |  
         echo "${{ env.started_time }}"
