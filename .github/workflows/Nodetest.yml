@@ -92,9 +92,8 @@ jobs:
       # /repos/frayme/angular-react-starter/actions/runs/check-runs/${{needs.build.outputs.get-job-id-1}} > 1.json \
       run: |
        gh api \
-       -H "Time-Zone: Asia/Yekaterinburg" \ 
-       -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at' > start.txt
+       -H "Time-Zone: Asia/Yekaterinburg; Accept: application/vnd.github+json" \
+       -X POST /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.started_at' > start.txt
        echo " started_time= $(cat start.txt)" >> $GITHUB_ENV
     - run: |  
         echo "${{ env.started_time }}"
@@ -102,7 +101,7 @@ jobs:
       run: |
        gh api \
        -H "Time-Zone: Asia/Yekaterinburg" -H "Accept: application/vnd.github+json" \
-       -X POST /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.completed_at'  > end.txt 
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.get-job-id-1}} --jq '.completed_at'  > end.txt 
     - run: cat end.txt
     - name: Check files!
       run: cat start.txt #| sed 's/:/./g' > result1.txt
