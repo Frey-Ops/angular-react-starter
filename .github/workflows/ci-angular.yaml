@@ -137,4 +137,4 @@ jobs:
          The package available at the link ghcr.io/frayme/${{env.IMAGE_NAME}}:${{ needs.testing.outputs.short-sha1 }}. Please check docker-compose file for local deploy and change url address if that need.
         to: prutkov.work@gmail.com
         from: ${{ github.repository_owner }}
-
+#
