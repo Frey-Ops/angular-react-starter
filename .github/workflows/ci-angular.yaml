@@ -19,7 +19,9 @@ jobs:
      strategy:
          fail-fast: true
 
-     steps:   
+     steps:
+     - name: Step
+       run: echo ${GITHUB_SHA::7}
      - uses: actions/checkout@v1
      - name: Use Node.js
        uses: actions/setup-node@v1
