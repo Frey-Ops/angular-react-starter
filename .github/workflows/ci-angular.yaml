@@ -1,6 +1,3 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Angular CI
 
 on:
@@ -8,17 +5,15 @@ on:
     branches: [ "test" ]
 env:
   IMAGE_NAME: angular
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   testing:
      runs-on: ubuntu-latest
      outputs:
         get-job-id-test: ${{steps.job-id-test.outputs.get-job-id-test-out}}
-
      strategy:
          fail-fast: true
-
      steps:
      - name: Step
        run: echo ${GITHUB_SHA::7}
@@ -72,12 +67,12 @@ jobs:
       working-directory: angular
     - name: Login to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - name: Build a container image from our angular and react app using Docker
-      run: docker build -t $IMAGE_NAME .
+    - name: Build a container image from our angular app using Docker
+      run: docker build -t $IMAGE_NAME:${GITHUB_SHA::7} .
     - name: Tag & publish to GitHub Container Registry
       run: |
            IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-           VERSION=latest
+           VERSION=${GITHUB_SHA::7}
            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
            docker push $IMAGE_ID:$VERSION
            
@@ -136,6 +131,7 @@ jobs:
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
         body: Testing job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.testing.result }}. ${{ needs.test.outputs.get-github-job }} started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
          Build and Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build_push.result }}. ${{ needs.build_push.outputs.get-github-job }} started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
+         The package available at the link ghcr.io/frayme/${{env.IMAGE_NAME}}:${GITHUB_SHA::7}. Please check docker-compose file for local deploy
         to: prutkov.work@gmail.com
         from: ${{ github.repository_owner }}
 
