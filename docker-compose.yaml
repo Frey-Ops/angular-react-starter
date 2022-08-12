@@ -2,7 +2,7 @@ version: '3'
 
 services:
  nginx:
-    image: ghcr.io/frayme/angular:latest
+    image: ghcr.io/frayme/angular
     container_name: lb-nginx
     restart: always
     ports:
