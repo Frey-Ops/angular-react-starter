@@ -12,8 +12,9 @@ jobs:
      strategy:
          fail-fast: true
      steps:
-     - uses: actions/checkout@v1
-     - name: setup-node
+     - name: clone repo
+       uses: actions/checkout@v1
+     - name: setup node
        uses: actions/setup-node@v1
        with:
         node-version:  '18.6'
@@ -29,8 +30,9 @@ jobs:
     strategy:
       fail-fast: true
     steps:
-    - uses: actions/checkout@v1
-    - name: setup-node
+    - name: clone repo
+      uses: actions/checkout@v1
+    - name: setup node
       uses: actions/setup-node@v1
       with:
         node-version: '18.6'
@@ -38,10 +40,20 @@ jobs:
       run: |
         npm install
         npm run build --if-present
-      working-directory: angular
+      working-directory: angular    
+    - name: cache files
+      uses: actions/cache@v3
+      id: cache-files
+      with:
+        path: |
+          ./angular
+          ./nginx.conf
+          ./Dockerfile
+        key: ${{ runner.os }}-build
     - name: login github registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - name: build image
+    - if: ${{ steps.cache-files.outputs.cache-hit != 'true' }}
+      name: build image
       run: docker build -t $IMAGE_NAME:${GITHUB_SHA::7} .
     - name: tag and push docker image
       run: |
