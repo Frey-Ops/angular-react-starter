@@ -2,77 +2,48 @@ name: Angular CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "test" ]
 env:
   IMAGE_NAME: angular
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
 jobs:
-  testing:
+  test:
      runs-on: ubuntu-latest
-     outputs:
-        get-job-id-test: ${{steps.job-id-test.outputs.get-job-id-test-out}}
-        short-sha1: ${{steps.env-short-sha.outputs.short-sha}}
      strategy:
          fail-fast: true
      steps:
-     - name: Take Short SHA
-       id: env-short-sha
-       run: echo "::set-output name=short-sha::${GITHUB_SHA::7}"
      - uses: actions/checkout@v1
-     - name: Use Node.js
+     - name: setup-node
        uses: actions/setup-node@v1
        with:
         node-version:  '18.6'
-     - name: Test angular
+     - name: test angular
        run: |
         npm install
         npm run test -- --watch=false --browsers=ChromeHeadless
        working-directory: angular
-     - name: Get Current ID Job 
-       uses: Tiryoh/gha-jobid-action@v0
-       id: get-job-id-test
-       with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          job_name: ${{github.job}}
-          per_page: 30
-     - name: Set job_id testing
-       id: job-id-test
-       run: echo "::set-output name=get-job-id-test-out::${{steps.get-job-id-test.outputs.job_id}}"
   
-  build_push:
-    needs: [testing]
+  build:
+    needs: [test]
     runs-on: ubuntu-latest
-    outputs:
-        get-job-id-build: ${{steps.job-id-build.outputs.get-job-id-build}}
     strategy:
       fail-fast: true
     steps:
-    - name: Get Current ID Job 
-      uses: Tiryoh/gha-jobid-action@v0
-      id: get-job-id-build
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        job_name: build_push
-        per_page: 30
-    - name: Set job_id build
-      id: job-id-build
-      run: echo "::set-output name=get-job-id-build::${{steps.get-job-id-build.outputs.job_id}}"
     - uses: actions/checkout@v1
-    - name: Use Node.js 
+    - name: setup-node
       uses: actions/setup-node@v1
       with:
         node-version: '18.6'
-    - name: Build angular
+    - name: build angular
       run: |
         npm install
         npm run build --if-present
       working-directory: angular
-    - name: Login to GitHub Container Registry
+    - name: login github registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - name: Build a container image from our angular app using Docker
+    - name: build image
       run: docker build -t $IMAGE_NAME:${GITHUB_SHA::7} .
-    - name: Tag & publish to GitHub Container Registry
+    - name: tag and push docker image
       run: |
            IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
            VERSION=${GITHUB_SHA::7}
