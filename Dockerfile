@@ -4,7 +4,7 @@ COPY ./angular/package* ./
 COPY ./angular .
 RUN npm run build
 
-FROM nginx:alpine
+FROM nginx:1.23.1-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=angular /angular/dist/angular-starter /usr/share/nginx/html
 EXPOSE 80
