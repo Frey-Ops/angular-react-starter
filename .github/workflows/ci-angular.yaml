@@ -2,7 +2,7 @@ name: Angular CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "test" ]
 env:
   IMAGE_NAME: angular 
 jobs:
