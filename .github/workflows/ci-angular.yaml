@@ -49,6 +49,10 @@ jobs:
           ./angular
           ./nginx.conf
           ./Dockerfile
+        key: |
+         Docker
+         nginx
+         angular
   push:
     needs: [test,build]
     runs-on: ubuntu-latest
