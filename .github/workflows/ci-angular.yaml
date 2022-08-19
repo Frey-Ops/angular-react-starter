@@ -67,10 +67,11 @@ jobs:
     - name: build image
       run: docker build -t $IMAGE_NAME:${GITHUB_SHA::7} .
     - name: tag image
+      id: set-image
       run: |
-         export IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          echo "::set-output name=IMAGE_ID::ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME"
            docker tag $IMAGE_NAME:${GITHUB_SHA::7} $IMAGE_ID:${GITHUB_SHA::7}
     - name: push image
       run: |
        echo $IMAGE_ID
-       docker push $IMAGE_ID:${GITHUB_SHA::7}
+       docker push ${{ steps.set-image.outputs.IMAGE_ID }}:${GITHUB_SHA::7}
