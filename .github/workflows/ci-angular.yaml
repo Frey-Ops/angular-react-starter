@@ -4,8 +4,7 @@ on:
   push:
     branches: [ "test" ]
 env:
-  IMAGE_NAME: angular
-  
+  IMAGE_NAME: angular 
 jobs:
   test:
      runs-on: ubuntu-latest
@@ -43,7 +42,6 @@ jobs:
       working-directory: angular    
     - name: cache files
       uses: actions/cache@v3
-      id: cache-files
       with:
         path: |
           ./angular
@@ -58,14 +56,14 @@ jobs:
     steps:
     - name: login github registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - uses: actions/cache@v3
+    - name: restore cache
+      uses: actions/cache@v3
       with:
        path:  |
           ./angular
           ./nginx.conf
           ./Dockerfile
        key: angular
-#    - if: ${{ steps.cache-files.outputs.cache-hit != 'true' }}
     - name: build image
       run: docker build -t $IMAGE_NAME:${GITHUB_SHA::7} .
     - name: tag and push docker image
