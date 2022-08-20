@@ -15,7 +15,7 @@ jobs:
      strategy:
          fail-fast: true
      steps:
-     - run: echo ${{github.commits.author.email}}
+     - run: echo ${{github.commits}}
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
@@ -121,8 +121,6 @@ jobs:
     strategy:
       fail-fast: true
     steps:
-    - name: expose git commit data
-      uses: rlespinasse/git-commit-data-action@v1
     - name: get time test start
       run: |
        gh api \
