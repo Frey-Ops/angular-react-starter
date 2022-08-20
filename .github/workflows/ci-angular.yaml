@@ -15,7 +15,7 @@ jobs:
      strategy:
          fail-fast: true
      steps:
-     - run: echo ${{github.commits}}
+     - run: echo ${{github.event.pusher.email}}
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
