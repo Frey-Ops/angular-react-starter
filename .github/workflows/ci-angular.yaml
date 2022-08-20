@@ -132,7 +132,6 @@ jobs:
        -H "Accept: application/vnd.github+json" \
        /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.test_out}} --jq '.completed_at' > finish_test.txt
        echo "finished_time_test=$(cat finish_test.txt)" >> $GITHUB_ENV
-     
     - name: get time build start
       run: |
        gh api \
@@ -158,7 +157,7 @@ jobs:
        /repos/frayme/angular-react-starter/check-runs/${{needs.push.outputs.push_out}} --jq '.completed_at' > finish_push.txt
        echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
        
-    - name: Send mail
+    - name: send mail failure
       if: ${{ failure() }}
       uses: dawidd6/action-send-mail@v3
       with:
@@ -172,8 +171,7 @@ jobs:
          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.
         to: prutkov.work@gmail.com
         from: ${{ github.repository_owner }}
-        
-    - name: Send mail
+    - name: send mail
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
