@@ -15,7 +15,6 @@ jobs:
      strategy:
          fail-fast: true
      steps:
-     - run: echo ${{github.event.pusher.email}}
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
@@ -171,7 +170,7 @@ jobs:
         body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}.
          Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}.
          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.
-        to: prutkov.work@gmail.com
+        to: ${{github.event.pusher.email}}
         from: ${{ github.repository_owner }}
         
     - name: Send mail
@@ -185,5 +184,5 @@ jobs:
         body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
          Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.
-        to: prutkov.work@gmail.com
+        to: ${{github.event.pusher.email}}
         from: ${{ github.repository_owner }}
