@@ -12,6 +12,15 @@ jobs:
      strategy:
          fail-fast: true
      steps:
+     - name: get test id 
+       uses: Tiryoh/gha-jobid-action@v0
+       id: test-id
+       with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: ${{github.job}}
+          per_page: 30
+     - name: set test id
+       run: echo "test_id=${{steps.test-id.outputs.job_id}}" >> $GITHUB_ENV
      - name: clone repo
        uses: actions/checkout@v1
      - name: setup node
@@ -30,6 +39,15 @@ jobs:
     strategy:
       fail-fast: true
     steps:
+    - name: get build id 
+      uses: Tiryoh/gha-jobid-action@v0
+      id: build-id
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: ${{github.job}}
+          per_page: 30
+    - name: set test id
+      run: echo "build_id=${{steps.build-id.outputs.job_id}}" >> $GITHUB_ENV
     - name: clone repo
       uses: actions/checkout@v1
     - name: setup node
@@ -55,6 +73,15 @@ jobs:
     strategy:
       fail-fast: true
     steps:
+    - name: get push id 
+      uses: Tiryoh/gha-jobid-action@v0
+      id: push-id
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: ${{github.job}}
+          per_page: 30
+    - name: set push id
+      run: echo "push_id=${{steps.push-id.outputs.job_id}}" >> $GITHUB_ENV
     - name: login github registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: restore cache
@@ -71,3 +98,84 @@ jobs:
       run:  docker tag $IMAGE_NAME:${GITHUB_SHA::7} $IMAGE_ID/$IMAGE_NAME:${GITHUB_SHA::7}
     - name: push image
       run:  docker push $IMAGE_ID/$IMAGE_NAME:${GITHUB_SHA::7}
+      
+  notification:
+    needs: [test,build,push]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+    - name: expose git commit data
+      uses: rlespinasse/git-commit-data-action@v1
+    - name: get time test start
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+       /repos/frayme/angular-react-starter/check-runs/${{ env.test_id }} --jq '.started_at' > start_test.txt
+       echo "started_time_test=$(cat start_test.txt)" >> $GITHUB_ENV
+    - name: get time test finish
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+       /repos/frayme/angular-react-starter/check-runs/${{ env.test_id }} --jq '.completed_at' > finish_test.txt
+       echo "finished_time_test=$(cat finish_test.txt)" >> $GITHUB_ENV
+     
+    - name: get time build start
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+       /repos/frayme/angular-react-starter/check-runs/${{ env.build_id }} --jq '.started_at' > start_build.txt
+       echo "started_time_build=$(cat start_build.txt)" >> $GITHUB_ENV
+    - name: get time build finish
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+       /repos/frayme/angular-react-starter/check-runs/$${{ env.build_id }} --jq '.completed_at' > finish_build.txt
+       echo "finished_time_build=$(cat finish_build.txt)" >> $GITHUB_ENV
+    - name: get time push start
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+       /repos/frayme/angular-react-starter/check-runs/${{ env.push_id }} --jq '.started_at' > start_push.txt
+       echo "started_time_push=$(cat start_push.txt)" >> $GITHUB_ENV
+    - name: get time push finish
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+       /repos/frayme/angular-react-starter/check-runs/${{ env.push_id }} --jq '.completed_at' > finish_push.txt
+       echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
+       
+    - name: Send mail
+      if: ${{ failure() }}
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.MAIL_USERNAME}}
+        password: ${{secrets.MAIL_PASSWORD}}
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}.
+         Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}.
+         Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.
+        to: ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}
+        from: ${{ github.repository_owner }}
+        
+    - name: Send mail
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.MAIL_USERNAME}}
+        password: ${{secrets.MAIL_PASSWORD}}
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
+         Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
+         Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.
+        to: ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}
+        from: ${{ github.repository_owner }}
