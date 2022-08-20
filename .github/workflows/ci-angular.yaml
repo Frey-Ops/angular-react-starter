@@ -10,9 +10,12 @@ env:
 jobs:
   test:
      runs-on: ubuntu-latest
+     outputs:
+        test_out: ${{steps.test-env.outputs.test_job_id}}
      strategy:
          fail-fast: true
      steps:
+     - run: echo ${{github.commits.author.email}}
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
@@ -21,7 +24,8 @@ jobs:
           job_name: ${{github.job}}
           per_page: 30
      - name: set test id
-       run: echo "test_id=${{steps.test-id.outputs.job_id}}" >> $GITHUB_ENV
+       id: test-env
+       run: echo "::set-output name=test_job_id::${{steps.test-id.outputs.job_id}}"
      - name: clone repo
        uses: actions/checkout@v1
      - name: setup node
@@ -37,6 +41,8 @@ jobs:
   build:
     needs: [test]
     runs-on: ubuntu-latest
+    outputs:
+        build_out: ${{steps.build-env.outputs.build_job_id}}
     strategy:
       fail-fast: true
     steps:
@@ -44,7 +50,6 @@ jobs:
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo $GITHUB_CONTEXT
-    - run: echo ${{ env.test_id }}
     - name: get build id 
       uses: Tiryoh/gha-jobid-action@v0
       id: build-id
@@ -52,8 +57,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           job_name: ${{github.job}}
           per_page: 30
-    - name: set build id
-      run: echo "build_id=${{steps.build-id.outputs.job_id}}" >> $GITHUB_ENV
+    - name: set test id
+      id: build-env
+      run: echo "::set-output name=build_job_id::${{steps.build-id.outputs.job_id}}"
     - name: clone repo
       uses: actions/checkout@v1
     - name: setup node
@@ -73,9 +79,12 @@ jobs:
           ./nginx.conf
           ./Dockerfile
         key:  angular-${GITHUB_SHA::7}
+        
   push:
     needs: [test,build]
     runs-on: ubuntu-latest
+    outputs:
+        push_out: ${{steps.push-env.outputs.push_job_id}}
     strategy:
       fail-fast: true
     steps:
@@ -87,7 +96,8 @@ jobs:
           job_name: ${{github.job}}
           per_page: 30
     - name: set push id
-      run: echo "push_id=${{steps.push-id.outputs.job_id}}" >> $GITHUB_ENV
+      id: push-env
+      run: echo "::set-output name=push_job_id::${{steps.push-id.outputs.job_id}}"
     - name: login github registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: restore cache
@@ -117,38 +127,38 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{ env.test_id }} --jq '.started_at' > start_test.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.test_out}} --jq '.started_at' > start_test.txt
        echo "started_time_test=$(cat start_test.txt)" >> $GITHUB_ENV
     - name: get time test finish
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{ env.test_id }} --jq '.completed_at' > finish_test.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.test_out}} --jq '.completed_at' > finish_test.txt
        echo "finished_time_test=$(cat finish_test.txt)" >> $GITHUB_ENV
      
     - name: get time build start
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{ env.build_id }} --jq '.started_at' > start_build.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.build_out}} --jq '.started_at' > start_build.txt
        echo "started_time_build=$(cat start_build.txt)" >> $GITHUB_ENV
     - name: get time build finish
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/$${{ env.build_id }} --jq '.completed_at' > finish_build.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.build_out}} --jq '.completed_at' > finish_build.txt
        echo "finished_time_build=$(cat finish_build.txt)" >> $GITHUB_ENV
     - name: get time push start
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{ env.push_id }} --jq '.started_at' > start_push.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.push.outputs.push_out}} --jq '.started_at' > start_push.txt
        echo "started_time_push=$(cat start_push.txt)" >> $GITHUB_ENV
     - name: get time push finish
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       /repos/frayme/angular-react-starter/check-runs/${{ env.push_id }} --jq '.completed_at' > finish_push.txt
+       /repos/frayme/angular-react-starter/check-runs/${{needs.push.outputs.push_out}} --jq '.completed_at' > finish_push.txt
        echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
        
     - name: Send mail
@@ -163,7 +173,7 @@ jobs:
         body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}.
          Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}.
          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.
-        to: ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}
+        to: prutkov.work@gmail.com
         from: ${{ github.repository_owner }}
         
     - name: Send mail
@@ -177,5 +187,5 @@ jobs:
         body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
          Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.
-        to: ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}
+        to: prutkov.work@gmail.com
         from: ${{ github.repository_owner }}
