@@ -40,6 +40,11 @@ jobs:
     strategy:
       fail-fast: true
     steps:
+    - name: Echo GitHub context
+      env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo $GITHUB_CONTEXT
+    - run: echo ${{ env.test_id }}
     - name: get build id 
       uses: Tiryoh/gha-jobid-action@v0
       id: build-id
@@ -118,7 +123,6 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
        /repos/frayme/angular-react-starter/check-runs/${{ env.test_id }} --jq '.completed_at' > finish_test.txt
        echo "finished_time_test=$(cat finish_test.txt)" >> $GITHUB_ENV
      
