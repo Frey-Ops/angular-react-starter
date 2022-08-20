@@ -6,6 +6,7 @@ on:
 env:
   IMAGE_NAME: angular 
   IMAGE_ID: ghcr.io/${{ github.repository_owner }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   test:
      runs-on: ubuntu-latest
@@ -46,7 +47,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           job_name: ${{github.job}}
           per_page: 30
-    - name: set test id
+    - name: set build id
       run: echo "build_id=${{steps.build-id.outputs.job_id}}" >> $GITHUB_ENV
     - name: clone repo
       uses: actions/checkout@v1
@@ -111,7 +112,6 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
        /repos/frayme/angular-react-starter/check-runs/${{ env.test_id }} --jq '.started_at' > start_test.txt
        echo "started_time_test=$(cat start_test.txt)" >> $GITHUB_ENV
     - name: get time test finish
@@ -126,28 +126,24 @@ jobs:
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
        /repos/frayme/angular-react-starter/check-runs/${{ env.build_id }} --jq '.started_at' > start_build.txt
        echo "started_time_build=$(cat start_build.txt)" >> $GITHUB_ENV
     - name: get time build finish
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
        /repos/frayme/angular-react-starter/check-runs/$${{ env.build_id }} --jq '.completed_at' > finish_build.txt
        echo "finished_time_build=$(cat finish_build.txt)" >> $GITHUB_ENV
     - name: get time push start
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
        /repos/frayme/angular-react-starter/check-runs/${{ env.push_id }} --jq '.started_at' > start_push.txt
        echo "started_time_push=$(cat start_push.txt)" >> $GITHUB_ENV
     - name: get time push finish
       run: |
        gh api \
        -H "Accept: application/vnd.github+json" \
-       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
        /repos/frayme/angular-react-starter/check-runs/${{ env.push_id }} --jq '.completed_at' > finish_push.txt
        echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
        
