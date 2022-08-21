@@ -157,7 +157,8 @@ jobs:
        /repos/frayme/angular-react-starter/check-runs/${{needs.push.outputs.push_out}} --jq '.completed_at' > finish_push.txt
        echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
        
-    - uses: cinotify/github-action@main
+    - name: CINotify Email
+      uses: cinotify/github-action@v1.1.0
       with:
         to: 'prutkov.work@gmail.com'
         subject: 'building main'
