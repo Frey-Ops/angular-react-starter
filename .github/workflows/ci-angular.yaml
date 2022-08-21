@@ -162,7 +162,7 @@ jobs:
       if: ${{ failure() }}
       uses: cinotify/github-action@v1.1.0
       with:
-        to: 'prutkov.work@gmail.com'
+        to: '${{ github.event.pusher.email }}'
         subject: '${{ github.workflow }} job of ${{ github.repository }} has ${{ job.status }}'
         body: |
           'Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}.
@@ -172,7 +172,7 @@ jobs:
     - name: CINotify Email
       uses: cinotify/github-action@v1.1.0
       with:
-        to: 'prutkov.work@gmail.com'
+        to: '${{ github.event.pusher.email }}'
         subject: '${{ github.workflow }} job of ${{ github.repository }} has ${{ job.status }}'
         body: | 
           'Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
