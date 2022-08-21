@@ -15,6 +15,7 @@ jobs:
      strategy:
          fail-fast: true
      steps:
+     - run: echo ${{ github.event.pusher.email }}
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
@@ -170,33 +171,7 @@ jobs:
       with:
         to: 'prutkov.work@gmail.com'
         subject: '${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}'
-        body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
-         Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
-         Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.
- #   - name: send mail failure
- #     if: ${{ failure() }}
- #     uses: dawidd6/action-send-mail@v3
- #     with:
- #       server_address: smtp.gmail.com
- #       server_port: 465
- #       username: ${{secrets.MAIL_USERNAME}}
- #       password: ${{secrets.MAIL_PASSWORD}}
- #       subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
- #       body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}.
- #        Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}.
- #        Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.
- #       to: prutkov.work@gmail.com
- #       from: ${{ github.repository_owner }}
- #   - name: send mail
- #     uses: dawidd6/action-send-mail@v3
-  #    with:
-  #      server_address: smtp.gmail.com
-  #      server_port: 465
-   #     username: ${{secrets.MAIL_USERNAME}}
-   #     password: ${{secrets.MAIL_PASSWORD}}
-    #    subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-     #   body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
-      #   Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
-       #  Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.
-        #to: prutkov.work@gmail.com
-        #from: ${{ github.repository_owner }}
+        body: | 
+          'Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
+          Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
+          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.'
