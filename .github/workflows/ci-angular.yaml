@@ -15,16 +15,7 @@ jobs:
      strategy:
          fail-fast: true
      steps:
-     - name: get email
-       id: test-email
-       uses: evvanErb/get-github-email-by-username-action@v1.25
-       with:
-          github-username: 'frayme' # This is the input username
-          token: ${{ secrets.GITHUB_TOKEN }} # This is an optional input of a PAT to use a more reliable way to get a user's email
-          
-      # Use the output from the `test` step
-     - name: Print the found email
-       run: echo "The email is ${{ steps.test-email.outputs.email }}" # Example of how to access output email
+     - run: echo ${{github.event.pull_request.user.login}}
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
