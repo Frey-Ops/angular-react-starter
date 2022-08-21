@@ -15,6 +15,9 @@ jobs:
      strategy:
          fail-fast: true
      steps:
+     - name: Check events
+       run: |
+        curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/users/frayme/events
      - name: get test id 
        uses: Tiryoh/gha-jobid-action@v0
        id: test-id
