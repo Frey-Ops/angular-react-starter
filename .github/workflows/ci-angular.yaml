@@ -158,12 +158,21 @@ jobs:
        echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
        
     - name: CINotify Email
+      if: ${{ failure() }}
       uses: cinotify/github-action@v1.1.0
       with:
         to: 'prutkov.work@gmail.com'
-        subject: 'building main'
-        body: 'This is a notification from GitHub actions uses cinotify/github-action@main.'
+        subject: '${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}'
+        body: 'Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.'
        
+    - name: CINotify Email
+      uses: cinotify/github-action@v1.1.0
+      with:
+        to: 'prutkov.work@gmail.com'
+        subject: '${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}'
+        body: Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
+         Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
+         Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.
  #   - name: send mail failure
  #     if: ${{ failure() }}
  #     uses: dawidd6/action-send-mail@v3
