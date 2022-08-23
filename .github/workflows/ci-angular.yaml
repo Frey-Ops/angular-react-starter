@@ -1,0 +1,175 @@
+name: Angular CI
+
+on:
+  push:
+    branches: [ "test" ]
+env:
+  IMAGE_NAME: angular 
+  IMAGE_ID: ghcr.io/${{ github.repository_owner }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  test:
+     runs-on: ubuntu-latest
+     outputs:
+        test_out: ${{steps.test-env.outputs.test_job_id}}
+     strategy:
+         fail-fast: true
+     steps:
+     - name: get test id 
+       uses: Tiryoh/gha-jobid-action@v0
+       id: test-id
+       with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: ${{github.job}}
+          per_page: 30
+     - name: set test id
+       id: test-env
+       run: echo "::set-output name=test_job_id::${{steps.test-id.outputs.job_id}}"
+     - name: clone repo
+       uses: actions/checkout@v1
+     - name: setup node
+       uses: actions/setup-node@v1
+       with:
+        node-version:  '18.6'
+     - name: test angular
+       run: |
+        npm install
+        npm run test -- --watch=false --browsers=ChromeHeadless
+       working-directory: angular
+  
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    outputs:
+        build_out: ${{steps.build-env.outputs.build_job_id}}
+    strategy:
+      fail-fast: true
+    steps:
+    - name: get build id 
+      uses: Tiryoh/gha-jobid-action@v0
+      id: build-id
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: ${{github.job}}
+          per_page: 30
+    - name: set test id
+      id: build-env
+      run: echo "::set-output name=build_job_id::${{steps.build-id.outputs.job_id}}"
+    - name: clone repo
+      uses: actions/checkout@v1
+    - name: setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '18.6'
+    - name: build angular
+      run: |
+        npm install
+        npm run build --if-present
+      working-directory: angular    
+    - name: cache files
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./angular
+          ./nginx.conf
+          ./Dockerfile
+        key:  angular-${{github.sha}}
+        
+  push:
+    needs: [test,build]
+    runs-on: ubuntu-latest
+    outputs:
+        push_out: ${{steps.push-env.outputs.push_job_id}}
+    strategy:
+      fail-fast: true
+    steps:
+    - name: get push id 
+      uses: Tiryoh/gha-jobid-action@v0
+      id: push-id
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          job_name: ${{github.job}}
+          per_page: 30
+    - name: set push id
+      id: push-env
+      run: echo "::set-output name=push_job_id::${{steps.push-id.outputs.job_id}}"
+    - name: login github registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: restore cache
+      uses: actions/cache@v3
+      with:
+       path:  |
+          ./angular
+          ./nginx.conf
+          ./Dockerfile
+       key: angular-${{github.sha}}
+    - name: build image
+      run: docker build -t $IMAGE_NAME:${GITHUB_SHA::7} .
+    - name: tag image
+      run:  docker tag $IMAGE_NAME:${GITHUB_SHA::7} $IMAGE_ID/$IMAGE_NAME:${GITHUB_SHA::7}
+    - name: push image
+      run:  docker push $IMAGE_ID/$IMAGE_NAME:${GITHUB_SHA::7}
+      
+  notification:
+    needs: [test,build,push]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+    - name: get time test start
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.test_out}} --jq '.started_at' > start_test.txt
+       echo "started_time_test=$(cat start_test.txt)" >> $GITHUB_ENV
+    - name: get time test finish
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.test.outputs.test_out}} --jq '.completed_at' > finish_test.txt
+       echo "finished_time_test=$(cat finish_test.txt)" >> $GITHUB_ENV
+    - name: get time build start
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.build_out}} --jq '.started_at' > start_build.txt
+       echo "started_time_build=$(cat start_build.txt)" >> $GITHUB_ENV
+    - name: get time build finish
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.build.outputs.build_out}} --jq '.completed_at' > finish_build.txt
+       echo "finished_time_build=$(cat finish_build.txt)" >> $GITHUB_ENV
+    - name: get time push start
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.push.outputs.push_out}} --jq '.started_at' > start_push.txt
+       echo "started_time_push=$(cat start_push.txt)" >> $GITHUB_ENV
+    - name: get time push finish
+      run: |
+       gh api \
+       -H "Accept: application/vnd.github+json" \
+       /repos/frayme/angular-react-starter/check-runs/${{needs.push.outputs.push_out}} --jq '.completed_at' > finish_push.txt
+       echo "finished_time_push=$(cat finish_push.txt)" >> $GITHUB_ENV
+       
+    - name: send email failure
+      if: ${{ failure() }}
+      uses: cinotify/github-action@v1.1.0
+      with:
+        to: '${{ github.event.pusher.email }}'
+        subject: '${{ github.workflow }}  from ${{ github.repository }} has ${{ job.status }}'
+        body: |
+          'Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}.
+           Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}.
+           Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}.'
+       
+    - name: send email
+      uses: cinotify/github-action@v1.1.0
+      with:
+        to: '${{ github.event.pusher.email }}'
+        subject: '${{ github.workflow }} from ${{ github.repository }} has ${{ job.status }}'
+        body: | 
+          'Test job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.test.result }}. Job started at ${{ env.started_time_test }} and finished at ${{ env.finished_time_test }}.
+          Build job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.build.result }}. Build started at ${{ env.started_time_build }} and finished at ${{ env.finished_time_build }}.
+          Push job in workflow ${{ github.workflow }} of ${{ github.repository }} has result ${{ needs.push.result }}. Push started at ${{ env.started_time_push }} and finished at ${{ env.finished_time_push }}.'
